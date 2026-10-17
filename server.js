@@ -11,17 +11,30 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
+// ✅ Cria a pasta e arquivo automaticamente se não existir
 const DADOS_ARQUIVO = path.join(__dirname, 'dados.json');
 
 function carregarDados() {
-    if (!fs.existsSync(DADOS_ARQUIVO)) {
-        return { contas: [], chaves: [], acessosCompartilhados: {} };
+    try {
+        if (!fs.existsSync(DADOS_ARQUIVO)) {
+            salvarDados({ chaves: [], contas: [] });
+        }
+        const conteudo = fs.readFileSync(DADOS_ARQUIVO, 'utf8');
+        return JSON.parse(conteudo || '{ "chaves": [], "contas": [] }');
+    } catch (e) {
+        console.error('Erro ao carregar dados:', e);
+        return { chaves: [], contas: [] };
     }
-    return JSON.parse(fs.readFileSync(DADOS_ARQUIVO, 'utf8'));
 }
 
 function salvarDados(dados) {
-    fs.writeFileSync(DADOS_ARQUIVO, JSON.stringify(dados, null, 2));
+    try {
+        fs.writeFileSync(DADOS_ARQUIVO, JSON.stringify(dados, null, 2));
+        return true;
+    } catch (e) {
+        console.error('Erro ao salvar:', e);
+        return false;
+    }
 }
 
 const ADMIN_USER = 'santos';
@@ -138,6 +151,10 @@ app.post('/api/usuarios/criar', (req, res) => {
     }
     
     const dadosChave = decodificarChave(chave);
+    if (!dadosChave) {
+        return res.json({ sucesso: false, erro: 'Chave inválida' });
+    }
+    
     const expiraEm = new Date();
     expiraEm.setDate(expiraEm.getDate() + dadosChave.dias);
     
