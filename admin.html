@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Dono — TOBI SECRET</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="fundo"></div>
+    <div class="grade-fundo"></div>
+    
+    <div class="container">
+        <!-- 🔒 LOGIN ADMIN -->
+        <div id="tela-admin-login" class="tela ativa">
+            <header class="cabecalho">
+                <div class="icone-principal">⚙️</div>
+                <h1 class="logo">PAINEL DO DONO</h1>
+                <p class="subtitulo">Gerenciamento de Chaves de Acesso</p>
+            </header>
+            
+            <div class="caixa-conteudo">
+                <h2>🔐 Login Administrativo</h2>
+                <div class="input-grupo">
+                    <label>👤 Usuário</label>
+                    <input type="text" id="admin-usuario" placeholder="Digite o usuário">
+                </div>
+                <div class="input-grupo">
+                    <label>🔒 Senha</label>
+                    <input type="password" id="admin-senha" placeholder="Digite sua senha">
+                </div>
+                <button class="btn-principal" onclick="loginAdmin()">➡️ ENTRAR</button>
+                <p id="msg-admin-login" class="mensagem"></p>
+                <p class="voltar"><a href="index.html">⬅️ Voltar ao site</a></p>
+            </div>
+        </div>
+        
+        <!-- ✅ PAINEL ADMIN -->
+        <div id="tela-admin" class="tela">
+            <header class="cabecalho">
+                <div class="barra-superior">
+                    <div class="logo-cabecalho">
+                        <span class="icone">⚙️</span>
+                        <span class="texto-logo">PAINEL DO DONO</span>
+                    </div>
+                    <button class="btn-sair" onclick="sairAdmin()">🚪 Sair</button>
+                </div>
+                <p class="subtitulo">Gerar chaves de acesso com tempo de uso</p>
+            </header>
+            
+            <div class="caixa-conteudo">
+                <h2>➕ Gerar Nova Chave</h2>
+                
+                <div class="input-grupo">
+                    <label>⏱️ Tempo de validade</label>
+                    <select id="tempo-dias">
+                        <option value="1">1 Dia</option>
+                        <option value="3">3 Dias</option>
+                        <option value="7">7 Dias</option>
+                        <option value="30">30 Dias</option>
+                    </select>
+                </div>
+                
+                <button class="btn-principal" onclick="gerarChave()">🔂 GERAR CHAVE</button>
+                
+                <div id="caixa-chave" class="caixa-chave escondido">
+                    <p>✅ Chave gerada — copie e envie ao cliente:</p>
+                    <div class="chave-codigo">
+                        <span id="chave-gerada"></span>
+                        <button class="btn-copiar" onclick="copiarChave()">📋 Copiar</button>
+                    </div>
+                    <p class="chave-info">Válido por: <span id="chave-tempo"></span></p>
+                </div>
+                
+                <hr class="separador">
+                
+                <h2>📋 Chaves Geradas</h2>
+                <div id="lista-chaves" class="lista-chaves">
+                    <p class="vazio">Nenhuma chave gerada ainda.</p>
+                </div>
+
+                <hr class="separador">
+                
+                <h2>👤 Contas de Usuários</h2>
+                <div id="lista-contas" class="lista-chaves">
+                    <p class="vazio">Nenhum usuário cadastrado ainda.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

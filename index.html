@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOBI SECRET — Scanner Forense</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+<body>
+    <div class="fundo"></div>
+    <div class="grade-fundo"></div>
+    
+    <div class="container">
+        <!-- 🔒 TELA INICIAL -->
+        <div id="tela-inicial" class="tela ativa">
+            <header class="cabecalho">
+                <div class="icone-principal">🛡️</div>
+                <h1 class="logo">TOBI SECRET</h1>
+                <p class="subtitulo">Análise Forense de Dispositivos • Detecção de Modificações</p>
+            </header>
+            
+            <div class="caixa-conteudo">
+                <h2>Bem-vindo ao sistema de verificação</h2>
+                <p class="descricao-inicial">Escolha uma opção abaixo para acessar o scanner de segurança.</p>
+                
+                <div class="botoes-iniciais">
+                    <button class="btn-principal" onclick="mostrarTela('ativar')">
+                        <span class="btn-icone">🔑</span>
+                        <span>Ativar Chave de Acesso</span>
+                    </button>
+                    <button class="btn-secundario" onclick="mostrarTela('login')">
+                        <span class="btn-icone">👤</span>
+                        <span>Já tenho conta</span>
+                    </button>
+                </div>
+                
+                <div class="divisor">
+                    <span>ou</span>
+                </div>
+                
+                <div class="link-admin">
+                    <a href="admin.html">⚙️ Painel Administrativo</a>
+                </div>
+            </div>
+            
+            <footer class="rodape-simples">
+                <p>v2.0 • Detecção de mais de 300 padrões de risco</p>
+            </footer>
+        </div>
+
+        <!-- 🔑 ATIVAR CHAVE E CRIAR CONTA -->
+        <div id="tela-ativar" class="tela">
+            <header class="cabecalho">
+                <button class="btn-voltar" onclick="mostrarTela('inicial')">
+                    ← Voltar
+                </button>
+                <h1 class="logo">TOBI SECRET</h1>
+                <p class="subtitulo">Ative sua licença e crie sua conta</p>
+            </header>
+            
+            <div class="caixa-conteudo">
+                <div class="passo-indicador">
+                    <span class="passo ativo">1. Chave</span>
+                    <span class="passo-separador">→</span>
+                    <span class="passo">2. Conta</span>
+                </div>
+                
+                <h2>🔑 Código de Ativação</h2>
+                <div class="input-grupo">
+                    <input type="text" id="input-chave" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19">
+                </div>
+                <button class="btn-principal" onclick="verificarChave()">
+                    ✅ Verificar Chave
+                </button>
+                <p id="msg-chave" class="mensagem"></p>
+                
+                <div id="form-conta" class="escondido">
+                    <hr class="separador">
+                    <h2>👤 Criar Conta de Acesso</h2>
+                    
+                    <div class="input-grupo">
+                        <label>Nome de Usuário</label>
+                        <input type="text" id="input-nome-usuario" placeholder="Mínimo de 3 caracteres">
+                    </div>
+                    
+                    <div class="input-grupo">
+                        <label>Senha</label>
+                        <input type="password" id="input-nome-senha" placeholder="Mínimo de 4 caracteres">
+                    </div>
+                    
+                    <div class="input-grupo">
+                        <label>Confirmar Senha</label>
+                        <input type="password" id="input-confirmar-senha" placeholder="Repita sua senha">
+                    </div>
+                    
+                    <button class="btn-principal" onclick="criarConta()">
+                        ✅ Criar Conta e Acessar
+                    </button>
+                    <p id="msg-conta" class="mensagem"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📝 FAZER LOGIN -->
+        <div id="tela-login" class="tela">
+            <header class="cabecalho">
+                <button class="btn-voltar" onclick="mostrarTela('inicial')">
+                    ← Voltar
+                </button>
+                <h1 class="logo">TOBI SECRET</h1>
+                <p class="subtitulo">Entre com suas credenciais</p>
+            </header>
+            
+            <div class="caixa-conteudo">
+                <h2>👤 Acessar Sistema</h2>
+                
+                <div class="input-grupo">
+                    <label>Usuário</label>
+                    <input type="text" id="input-login-usuario" placeholder="Seu nome de usuário">
+                </div>
+                
+                <div class="input-grupo">
+                    <label>Senha</label>
+                    <input type="password" id="input-login-senha" placeholder="Sua senha de acesso">
+                </div>
+                
+                <button class="btn-principal" onclick="fazerLogin()">
+                    ➡️ Entrar no Sistema
+                </button>
+                <p id="msg-login" class="mensagem"></p>
+            </div>
+        </div>
+        
+        <!-- ✅ TELA PRINCIPAL (SCANNER) -->
+        <div id="tela-scanner" class="tela">
+            <header class="cabecalho-cabecalho">
+                <div class="barra-superior">
+                    <div class="logo-cabecalho">
+                        <span class="icone">🛡️</span>
+                        <span class="texto-logo">TOBI SECRET</span>
+                    </div>
+                    <div class="controles-usuario">
+                        <span id="nome-usuario-logado" class="nome-usuario"></span>
+                        <button class="btn-sair" onclick="sair()">
+                            Sair
+                        </button>
+                    </div>
+                </div>
+                <div id="status-validade" class="barra-status"></div>
+            </header>
+
+            <main class="conteudo-principal">
+                <section class="cartao cartao-upload">
+                    <div class="cartao-cabecalho">
+                        <h2>📤 Envie seu Arquivo de Log</h2>
+                        <span class="versao">v2.0</span>
+                    </div>
+                    <p class="texto-ajuda">Selecione o arquivo <code>bugreport-*.zip</code> gerado pelo sistema Android</p>
+                    
+                    <div class="area-drop" id="area-drop">
+                        <input type="file" id="arquivo-zip" accept=".zip">
+                        <div class="area-conteudo">
+                            <div class="area-icone">📁</div>
+                            <p class="area-texto">Clique para selecionar ou arraste o arquivo aqui</p>
+                            <p class="area-formato">Apenas arquivos .zip • Máximo 50MB</p>
+                        </div>
+                    </div>
+                    
+                    <button id="btn-analisar" class="btn-principal btn-analisar" onclick="iniciarAnalise()">
+                        <span class="btn-icone">🔍</span>
+                        Iniciar Análise Forense
+                    </button>
+                </section>
+
+                <section id="area-progresso" class="cartao cartao-progresso escondido">
+                    <h2>⏳ Processando</h2>
+                    <p id="texto-status" class="texto-status">Lendo arquivo...</p>
+                    <div class="barra-fundo">
+                        <div id="barra-carregamento" class="barra-carregamento"></div>
+                    </div>
+                    <p class="etiqueta-progresso" id="etiqueta-porcentagem">0%</p>
+                </section>
+
+                <section id="area-resultados" class="escondido">
+                    <div class="cartao cartao-resultado">
+                        <div class="resultado-cabecalho">
+                            <div class="resultado-icone" id="resultado-icone">✅</div>
+                            <div>
+                                <h2 id="titulo-resultado">Análise Concluída</h2>
+                                <p class="data-hora" id="data-hora"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="estatisticas">
+                            <div class="item-estatistica">
+                                <span class="valor" id="total-verificados">0</span>
+                                <span class="rotulo">Padrões Verificados</span>
+                            </div>
+                            <div class="item-estatistica">
+                                <span class="valor destaque" id="total-encontrados">0</span>
+                                <span class="rotulo">Itens Detectados</span>
+                            </div>
+                            <div class="item-estatistica">
+                                <span class="valor" id="categorias-afetadas">0</span>
+                                <span class="rotulo">Categorias</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="lista-resultados" class="lista-resultados"></div>
+                </section>
+            </main>
+
+            <footer class="rodape">
+                <p>🛡️ TOBI SECRET — Sistema de Análise de Segurança • Todos os direitos reservados</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const areaDrop = document.getElementById('area-drop');
+            const inputArquivo = document.getElementById('arquivo-zip');
+            
+            if (areaDrop && inputArquivo) {
+                areaDrop.addEventListener('click', () => inputArquivo.click());
+                
+                inputArquivo.addEventListener('change', (e) => {
+                    const arquivo = e.target.files[0];
+                    if (arquivo) {
+                        areaDrop.classList.add('selecionado');
+                        areaDrop.querySelector('.area-icone').textContent = '✅';
+                        areaDrop.querySelector('.area-texto').textContent = arquivo.name;
+                        areaDrop.querySelector('.area-formato').textContent = 
+                            (arquivo.size / 1024 / 1024).toFixed(2) + ' MB';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
